@@ -63,6 +63,8 @@ const SafetyCross = ({  onDayClick }) => {
     [21, 22, 23, 24, 25, 26, 27],
     [ 28, 29, 30],
     [null,31, null]
+    [null,31, null]
+
   ];
 
 

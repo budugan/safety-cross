@@ -38,9 +38,21 @@ export const saveEventType = async (eventType) => {
   return response.json();
 };
 
-export const deleteEventType = async (eventType) => {
+export const deleteEventType = async (id) => {
   const response = await fetch(`http://localhost:5000/eventType`, {
     method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({id:id})
+  });
+  if (!response.ok) throw new Error("Failed to delete event type");
+  return response.json();
+};
+
+export const deleteEvent = async (event) => {
+  const response = await fetch("http://localhost:5000/event", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(event)
   });
   if (!response.ok) throw new Error("Failed to delete event type");
   return response.json();

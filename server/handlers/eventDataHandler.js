@@ -99,7 +99,7 @@ const postEventType = async(req, res) => {
     res.status(500);
     res.json({});
   }
- 
+
 };
 
 const getEventTypes = async (req, res) => {
@@ -116,11 +116,54 @@ const getEventTypes = async (req, res) => {
  
 };
 
+const deleteEventType = async (req, res) => {
+  const { id } = req.body; 
+  console.log(req.body)
+  try {
+    const deleted = await TipEveniment.destroy({
+      where: { id: Number(id) }
+    });
+
+    if (deleted) {
+      res.status(200).json({ message: "Event type deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Event type not found" });
+    }
+  } catch (e) {
+    console.log("Failed to delete event type", e);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const deleteEvent = async (req, res) => {
+  const { id } = req.body; 
+
+  console.log(req.body)
+  try {
+    const deleted = await Eveniment.destroy({
+      where: { id: Number(id) }
+    });
+
+    if (deleted) {
+      res.status(200).json({ message: "Event deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Event not found" });
+    }
+  } catch (e) {
+    console.log("Failed to delete event", e);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
 
 module.exports = {
   getEvents,
   postEvent,
   postEventType,
   getEventTypes,
-  getEventsByMonth
+  getEventsByMonth,
+  deleteEventType,
+  deleteEvent
 };

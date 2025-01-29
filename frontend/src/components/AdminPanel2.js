@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { fetchEventTypes, saveEvent, saveEventType,deleteEventType } from "../services/api";
+import {
+  fetchEventTypes,
+  saveEvent,
+  saveEventType,
+  deleteEventType,
+  deleteEvent,
+  fetchEventsByMonth
+} from "../services/api";
 
 export default function AdminPanel() {
   const [eventTitle, setEventTitle] = useState("");
@@ -11,13 +18,38 @@ export default function AdminPanel() {
   const [eventColor, setEventColor] = useState("");
 
   const [eventTypeList, setEventTypeList] = useState([]);
+  const [events, setEvents] = useState([]);
+
 
   useEffect(() => {
     loadEventTypes();
+    loadEvents();
   }, []);
 
   let loadEventTypes = () => {
     fetchEventTypes().then((evTyps) => setEventTypeList(evTyps));
+  };
+
+  let loadEvents = async  () => {
+    let monthStart = new Date();
+    monthStart.setMonth(monthStart.getMonth() -1);
+    monthStart.setDate(1);
+
+    let monthEnd = new Date();
+    monthEnd.setDate(31);
+
+
+    fetchEventsByMonth({ from: formatDate(monthStart), to: formatDate(monthEnd) })
+      .then((res) => setEvents(res))
+      .catch(() => alert("Failed to fetch events"));
+    
+  }
+
+  const formatDate = (date) => {
+    let year = date.getFullYear();
+    let month = String(date.getMonth() + 1).padStart(2, "0");
+    let day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   };
 
   let postEvent = () => {
@@ -48,13 +80,32 @@ export default function AdminPanel() {
   };
 
   const handleDeleteEventType = (id) => {
-    if (window.confirm("Esti sigur ca vrei sa stergi acest tip de eveniment?")) {
-      deleteEventType(id).then(() => {
-        loadEventTypes();
-        alert("Tip eveniment sters");
-      }).catch((error) => {
-        alert("Eroare la stergerea tipului de eveniment");
-      });
+    if (
+      window.confirm("Esti sigur ca vrei sa stergi acest tip de eveniment?")
+    ) {
+      deleteEventType(id)
+        .then(() => {
+          loadEventTypes();
+          alert("Tip eveniment sters");
+        })
+        .catch((error) => {
+          alert("Eroare la stergerea tipului de eveniment");
+        });
+    }
+  };
+
+  const handleDeleteEvent = (id) => {
+    if (
+      window.confirm("Esti sigur ca vrei sa stergi acest eveniment?")
+    ) {
+      deleteEvent({id:id})
+        .then(() => {
+          loadEvents();
+          alert("Eveniment sters");
+        })
+        .catch((error) => {
+          alert("Eroare la stergerea evenimentului");
+        });
     }
   };
 
@@ -89,7 +140,6 @@ export default function AdminPanel() {
     <div className="admin-panel">
       <h1 className="admin-panel-title">Panou Admin</h1>
       <div className="admin-panel-container">
-        
         <div className="admin-panel-card">
           <h2>Inregistrare Eveniment</h2>
           <div className="form-group">
@@ -151,26 +201,34 @@ export default function AdminPanel() {
             Adauga Tip Eveniment
           </button>
         </div>
-      </div>
-      <div className="form">
-        <h2>Tipuri de evenimente existente</h2>
-        <ul className="event-type-list">
-          {eventTypeList.map((type) => (
-            <li key={type.id} className="event-type-item">
-              <span
-                className="event-type-color"
-                style={{ backgroundColor: type.color }}
-              ></span>
-              <span className="event-type-title">{type.title}</span>
-              <button
-                className="delete-event-type"
-                onClick={() => handleDeleteEventType(type.id)}
-              >
-                Șterge
-              </button>
-            </li>
-          ))}
-        </ul>
+        <div className="admin-panel-card">
+          <h2>Tipuri de evenimente existente</h2>
+          <ul className="event-type-list">
+            {eventTypeList.map((type) => (
+              <li key={type.id} className="event-type-item">
+                <span className="event-type-title">{type.title}</span>
+                <div
+                  className="delete-event-type"
+                  onClick={() => handleDeleteEventType(type.id)}
+                ></div>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="admin-panel-card">
+          <h2> Evenimente Existente</h2>
+          <ul className = "event-list">
+            {events.map((event) => (
+              <li className="event-item" key={event.id}>{event.title} ({event.date})
+                <div
+                  className="delete-event"
+                  onClick={() => handleDeleteEvent(event.id)}
+                ></div>
+              
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

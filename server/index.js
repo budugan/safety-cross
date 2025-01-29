@@ -19,6 +19,8 @@ app.post("/", eventDataHandler.postEvent);
 app.post("/eventType", eventDataHandler.postEventType);
 app.post("/eventsByMonth", eventDataHandler.getEventsByMonth);
 
+app.delete("/eventType", eventDataHandler.deleteEventType);
+app.delete("/event", eventDataHandler.deleteEvent);
 
 
 app.listen(PORT, () => {

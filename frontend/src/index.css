@@ -208,5 +208,43 @@ input[type="color"] {
   background-color: #0056b3;
 }
 
+.delete-event-type{
+ cursor: pointer;
+  background-image: url("../public/bin2.png");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 1.1rem;
+  height: 1.1rem;
 
+}
+
+.event-type-item {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  justify-items: center;
+}
+
+.delete-event{
+  cursor: pointer;
+   background-image: url("../public/bin2.png");
+   background-size: contain;
+   background-position: center;
+   background-repeat: no-repeat;
+   width: 1.1rem;
+   height: 1.1rem;
+ 
+ }
+ 
+ .event-item {
+   display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+   justify-content: space-between;
+   align-items: center;
+   justify-items: center;
+ }
 

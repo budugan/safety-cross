@@ -24,11 +24,13 @@ const getEvents = async (req, res) => {
 
 
 const getEventsByMonth = async (req, res) => {
-  const {from,to} = req.body;
 
   try{
+    const {from,to,tag} = req.body;
+
     let result = await Eveniment.findAll({
       where: {
+        tag,
         date: {
           [Op.between]:[from, to]
         }
@@ -52,10 +54,10 @@ const getEventsByMonth = async (req, res) => {
 
 
 const postEvent = async (req, res) => {
-  const {description, title, date, type } = req.body;
+  const {description, title, date, type,tag } = req.body;
 
   try{
-    await Eveniment.create({description:description, title:title, date:date, evTypeId:type })
+    await Eveniment.create({description:description, title:title, date:date, evTypeId:type ,tag:tag})
     res.status(201);
     res.json({});
   }
@@ -88,10 +90,10 @@ const postEvent = async (req, res) => {
 
 
 const postEventType = async(req, res) => {
-  const { title, color } = req.body;
+  const { title, color,tag } = req.body;
 
   try{
-    await TipEveniment.create({title:title, color:color});
+    await TipEveniment.create({title:title, color:color,tag:tag});
     res.status(201);
     res.json({});
   }
@@ -103,10 +105,11 @@ const postEventType = async(req, res) => {
 };
 
 const getEventTypes = async (req, res) => {
- 
+ const tag = req.query.tag;
+ if (!tag) return res.status(400).json({ error: "Missing tag" });
   try{
     res.status(200);
-    res.json( await TipEveniment.findAll());
+    res.json( await TipEveniment.findAll({where: {tag}}));
  
   }
   catch(e){console.log("failed to fetch events",e)

@@ -5,7 +5,7 @@ import {
   saveEventType,
   deleteEventType,
   deleteEvent,
-  fetchEventsByMonth
+  fetchEventsByMonth,
 } from "../services/api";
 
 export default function AdminPanel() {
@@ -20,30 +20,42 @@ export default function AdminPanel() {
   const [eventTypeList, setEventTypeList] = useState([]);
   const [events, setEvents] = useState([]);
 
+  const [selectedMonth, setSelectedMonth] = useState(
+    new Date().toISOString().slice(0, 7) 
+  );
+
+  const parts = window.location.pathname.split("/").filter(Boolean);
+  const tag = parts.length > 0 ? Number(parts[0]) : 1;
 
   useEffect(() => {
     loadEventTypes();
     loadEvents();
-  }, []);
+  }, [selectedMonth]);
 
   let loadEventTypes = () => {
-    fetchEventTypes().then((evTyps) => setEventTypeList(evTyps));
+    fetchEventTypes(tag).then((evTyps) => setEventTypeList(evTyps));
   };
 
-  let loadEvents = async  () => {
-    let monthStart = new Date();
-    monthStart.setMonth(monthStart.getMonth() -1);
-    monthStart.setDate(1);
-
-    let monthEnd = new Date();
-    monthEnd.setDate(31);
-
-
-    fetchEventsByMonth({ from: formatDate(monthStart), to: formatDate(monthEnd) })
+  const loadEvents = async () => {
+    const selectedDate = new Date(selectedMonth);
+    const monthStart = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      1
+    );
+    const monthEnd = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth() + 1,
+      0
+    );
+    fetchEventsByMonth({
+      from: formatDate(monthStart),
+      to: formatDate(monthEnd),
+      tag: tag,
+    })
       .then((res) => setEvents(res))
       .catch(() => alert("Failed to fetch events"));
-    
-  }
+  };
 
   const formatDate = (date) => {
     let year = date.getFullYear();
@@ -52,18 +64,27 @@ export default function AdminPanel() {
     return `${year}-${month}-${day}`;
   };
 
+  const formatEventDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("ro-RO"); 
+  };
+
   let postEvent = () => {
     saveEvent({
       type: eventType,
       title: eventTitle,
       description: eventDescription,
       date: eventDate,
+      tag: tag,
     }).then(() => {
       setEventTitle("");
       setEventType("");
       setEventDescription("");
       setEventDate("");
       alert("Eveniment adaugat");
+      setTimeout(() => {
+        loadEvents();
+      }, 500);
     });
   };
 
@@ -71,6 +92,7 @@ export default function AdminPanel() {
     saveEventType({
       title: eventName,
       color: eventColor,
+      tag: tag,
     }).then(() => {
       loadEventTypes();
       setEventColor("");
@@ -95,10 +117,8 @@ export default function AdminPanel() {
   };
 
   const handleDeleteEvent = (id) => {
-    if (
-      window.confirm("Esti sigur ca vrei sa stergi acest eveniment?")
-    ) {
-      deleteEvent({id:id})
+    if (window.confirm("Esti sigur ca vrei sa stergi acest eveniment?")) {
+      deleteEvent({ id: id })
         .then(() => {
           loadEvents();
           alert("Eveniment sters");
@@ -138,7 +158,7 @@ export default function AdminPanel() {
 
   return (
     <div className="admin-panel">
-      <h1 className="admin-panel-title">Panou Admin</h1>
+      <h1 className="admin-panel-title">Admininistrare Crucea {tag}</h1>
       <div className="admin-panel-container">
         <div className="admin-panel-card">
           <h2>Inregistrare Eveniment</h2>
@@ -176,7 +196,6 @@ export default function AdminPanel() {
           </button>
         </div>
 
-        {/* Event Type Addition Form */}
         <div className="admin-panel-card">
           <h2>Creare Nou Tip Eveniment</h2>
           <div className="form-group">
@@ -191,6 +210,7 @@ export default function AdminPanel() {
           <div className="form-group">
             <label>Alege Culoare Eveniment</label>
             <input
+              className="color-picker"
               type="color"
               value={eventColor}
               onInput={(e) => setEventColor(e.target.value)}
@@ -217,14 +237,21 @@ export default function AdminPanel() {
         </div>
         <div className="admin-panel-card">
           <h2> Evenimente Existente</h2>
-          <ul className = "event-list">
+          <div className="form-group">
+            <input
+              type="month"
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+            />
+          </div>
+          <ul className="event-list">
             {events.map((event) => (
-              <li className="event-item" key={event.id}>{event.title} ({event.date})
+              <li className="event-item" key={event.id}>
+                {event.title} {"- adaugat la "} ({formatEventDate(event.date)})
                 <div
                   className="delete-event"
                   onClick={() => handleDeleteEvent(event.id)}
                 ></div>
-              
               </li>
             ))}
           </ul>

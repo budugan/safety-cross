@@ -27,7 +27,8 @@ const TipEveniment = sequelize.define(
         color: {
             type: DataTypes.CHAR,
 
-        }
+        },
+        tag: { type: DataTypes.INTEGER, allowNull: false },
     }
 )
 
@@ -50,7 +51,8 @@ const Eveniment = sequelize.define(
         },
         evTypeId:{
             type: DataTypes.INTEGER
-        }
+        },
+        tag: { type: DataTypes.INTEGER, allowNull: false },
         
     }
 )

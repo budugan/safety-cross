@@ -4,23 +4,23 @@ export const fetchEvents = async () => {
   return response.json();
 };
 
-export const fetchEventsByMonth = async (timeInterval) => {
+export const fetchEventsByMonth = async (timeInterval, tag) => {
   const response = await fetch("http://localhost:5000/eventsByMonth", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(timeInterval),
+    body: JSON.stringify(timeInterval, {tag}),
   });
   if (!response.ok) throw new Error("Failed to save event");
   return response.json();
 };
 
-export const fetchEventTypes = async () => {
-  const response = await fetch("http://localhost:5000/eventTypes");
+export const fetchEventTypes = async (tag) => {
+  const response = await fetch(`http://localhost:5000/eventTypes?tag=${tag}`);
   if (!response.ok) throw new Error("failed to fetch event types");
   return response.json();
 };
 export const saveEvent = async (event) => {
-  const response = await fetch("http://localhost:5000/", {
+  const response = await fetch(`http://localhost:5000/?tag=${event.tag}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(event),
@@ -29,7 +29,7 @@ export const saveEvent = async (event) => {
   return response.json();
 };
 export const saveEventType = async (eventType) => {
-  const response = await fetch("http://localhost:5000/eventType", {
+  const response = await fetch(`http://localhost:5000/eventType?tag=${eventType.tag}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(eventType),

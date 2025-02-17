@@ -31,16 +31,28 @@ h1 {
     margin: 1vh;
     font-size: 5vh;
     border-radius: 1.5vh;
- 
-    
+  }
+
+  .admin-panel{
+    width: 90vh;
+    height: 90vh;
 
   }
+
+  /* .safety-cross-legend {
+    width: 30vh;  
+    height: 30vh; 
+  } */
+
+  
+
 }
 
 @media screen and (orientation:portrait) {
   .safety-cross {
     width: 98vw;
     height: 98vw;
+    position: relative;
   }
   .day{
     width: 11.8vw;
@@ -49,9 +61,17 @@ h1 {
     font-size: 5vw;
   
     border-radius: 1.5vw;
- 
 
   }
+
+  .admin-panel{
+    width: 90vw;
+    height: 90vw;
+
+  }
+
+  
+  
 }
 
 .safety-cross-row {
@@ -63,7 +83,7 @@ h1 {
   text-align: center;
   line-height: 30px;
   cursor: pointer;
-  background-color: gray;
+  background-color:#A9A9A9;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -248,3 +268,46 @@ input[type="color"] {
    justify-items: center;
  }
 
+ .safety-cross-legend {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;         /* Default width for smaller screens */
+  height: 200px;        /* Default height for smaller screens */
+  background: rgba(255, 255, 255, 0.95);
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #333;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 10;
+  overflow-y: auto;
+}
+
+.safety-cross-legend li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  margin-left: 12px;
+  border: 1px solid #000;
+  border-radius: 2px;
+  margin-right: 1vb;
+}
+
+.text-legenda {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.color-picker{
+  max-width: 50%;
+  min-width: 50%;
+}
